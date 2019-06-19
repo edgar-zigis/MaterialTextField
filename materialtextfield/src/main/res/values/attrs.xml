@@ -9,5 +9,6 @@
         <attr name="clearButtonColor" format="color" />
         <attr name="errorColor" format="color" />
         <attr name="isClearEnabled" format="boolean" />
+        <attr name="isLight" format="boolean" />
     </declare-styleable>
 </resources>

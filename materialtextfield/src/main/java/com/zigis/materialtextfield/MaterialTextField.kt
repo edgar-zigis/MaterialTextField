@@ -38,6 +38,7 @@ open class MaterialTextField : EditText {
     private var clearButtonColor = Color.parseColor("#7B8590")
     private var errorColor = Color.parseColor("#F24E4E")
     private var isClearEnabled = true
+    private var isLight = false
 
     //  Private vars
 
@@ -120,6 +121,15 @@ open class MaterialTextField : EditText {
             0
         )
 
+        isLight = styledAttributes.getBoolean(R.styleable.MaterialTextField_isLight, isLight)
+        if (isLight) {
+            defaultUnderlineColor = Color.parseColor("#52FFFFFF")
+            activeUnderlineColor = Color.WHITE
+            defaultHintColor = Color.parseColor("#95C8E4")
+            activeHintColor = Color.parseColor("#95C8E4")
+            cursorDrawableColor = Color.WHITE
+            clearButtonColor = Color.WHITE
+        }
         defaultHintColor = styledAttributes.getColor(R.styleable.MaterialTextField_defaultHintColor, defaultHintColor)
         activeHintColor = styledAttributes.getColor(R.styleable.MaterialTextField_activeHintColor, activeHintColor)
         defaultUnderlineColor = styledAttributes.getColor(R.styleable.MaterialTextField_defaultUnderlineColor, defaultUnderlineColor)
