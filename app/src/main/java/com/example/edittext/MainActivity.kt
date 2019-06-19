@@ -10,7 +10,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         button.setOnClickListener {
-            //mail.error = "Bad myil!"
+            mail.error = "Bad myil!"
         }
     }
 }

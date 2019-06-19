@@ -303,10 +303,7 @@ open class MaterialTextField : EditText {
     }
 
     override fun getError(): CharSequence {
-        errorText?.let {
-            return it
-        }
-        return super.getError()
+        return errorText ?: ""
     }
 
     private fun setDefaultSettings() {
