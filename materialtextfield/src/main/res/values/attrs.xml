@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="MaterialTextField">
+        <attr name="defaultHintColor" format="color" />
+        <attr name="activeHintColor" format="color" />
+        <attr name="defaultUnderlineColor" format="color" />
+        <attr name="activeUnderlineColor" format="color"/>
+        <attr name="cursorDrawableColor" format="color" />
+        <attr name="clearButtonColor" format="color" />
+        <attr name="errorColor" format="color" />
+        <attr name="isClearEnabled" format="boolean" />
+    </declare-styleable>
+</resources>
