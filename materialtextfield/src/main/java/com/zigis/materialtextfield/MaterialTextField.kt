@@ -30,15 +30,76 @@ open class MaterialTextField : EditText {
 
     //  Setting vars
 
-    private var defaultHintColor = Color.parseColor("#7C8894")
-    private var activeHintColor = Color.parseColor("#019CDE")
-    private var defaultUnderlineColor = Color.parseColor("#D0D4D5")
-    private var activeUnderlineColor = Color.parseColor("#019CDE")
-    private var cursorDrawableColor = Color.parseColor("#019CDE")
-    private var clearButtonColor = Color.parseColor("#7B8590")
-    private var errorColor = Color.parseColor("#F24E4E")
-    private var isClearEnabled = true
-    private var isLight = false
+    var defaultHintColor = Color.parseColor("#7C8894")
+        set(value) {
+            field = value
+            setHintTextColor(value)
+        }
+    var activeHintColor = Color.parseColor("#019CDE")
+    var defaultUnderlineColor = Color.parseColor("#D0D4D5")
+        set(value) {
+            field = value
+            underlineBackgroundPaint.color = value
+        }
+    var activeUnderlineColor = Color.parseColor("#019CDE")
+        set(value) {
+            field = value
+            underlineForegroundPaint.color = value
+        }
+    var cursorDrawableColor = Color.parseColor("#019CDE")
+        set(value) {
+            field = value
+            setCursorColor(value)
+            highlightColor = setColorAlpha(0.2f, value)
+            setSelectionHandleColor(value)
+        }
+    var rightButtonColor = Color.parseColor("#7B8590")
+        set(value) {
+            field = value
+            rightIconPaint.colorFilter = PorterDuffColorFilter(value, PorterDuff.Mode.SRC_IN)
+        }
+    var errorColor = Color.parseColor("#F24E4E")
+        set(value) {
+            field = value
+            errorPaint.color = value
+            errorPaint.colorFilter = PorterDuffColorFilter(value, PorterDuff.Mode.SRC_IN)
+        }
+    var isClearEnabled = true
+    var isLight = false
+        set(value) {
+            if (field == value) return
+            if (value) {
+                defaultUnderlineColor = Color.parseColor("#52FFFFFF")
+                activeUnderlineColor = Color.WHITE
+                defaultHintColor = Color.parseColor("#95C8E4")
+                activeHintColor = Color.parseColor("#95C8E4")
+                cursorDrawableColor = Color.WHITE
+                rightButtonColor = Color.WHITE
+            } else {
+                defaultUnderlineColor = Color.parseColor("#D0D4D5")
+                activeUnderlineColor = Color.parseColor("#019CDE")
+                defaultHintColor = Color.parseColor("#7C8894")
+                activeHintColor = Color.parseColor("#019CDE")
+                cursorDrawableColor = Color.parseColor("#019CDE")
+                rightButtonColor = Color.parseColor("#7B8590")
+            }
+            field = value
+        }
+    var rightIcon: Drawable? = null
+        set(value) {
+            field = value
+            val rightButtonIcon = value ?: context.getDrawable(R.drawable.ic_clear)
+            rightButtonIcon?.let {
+                rightButton = drawableToBitmap(it)
+                rightButtonSize = rightButton?.height?.toFloat() ?: 0f
+                setPadding(
+                    paddingStart,
+                    paddingTop,
+                    paddingEnd + rightButtonSize.toInt() + (rightButtonSpacing * 1.5f).toInt(),
+                    paddingBottom
+                )
+            }
+        }
 
     //  Private vars
 
@@ -47,10 +108,10 @@ open class MaterialTextField : EditText {
     private var originalHeight = 0
     private var originalPaddingBottom = 0
 
-    private var clearButton: Bitmap? = null
-    private var clearButtonSize = 0f
-    private var isClearButtonClickActive = false
-    private var isClearButtonTouchActive = false
+    private var rightButton: Bitmap? = null
+    private var rightButtonSize = 0f
+    private var isrightButtonClickActive = false
+    private var isrightButtonTouchActive = false
 
     private var staticUnderline: RectF? = null
     private var errorUnderline: RectF? = null
@@ -61,7 +122,7 @@ open class MaterialTextField : EditText {
     private var warningIconSize = 0f
 
     private var errorSpacing = dp(15)
-    private var clearButtonSpacing = dp(14)
+    private var rightButtonSpacing = dp(14)
     private var underlineHeight = dp(2)
     private var bottomUnderlineOffset = dp(3)
     private var isUnderlineAnimating = false
@@ -70,7 +131,7 @@ open class MaterialTextField : EditText {
     private var underlineForegroundPaint = Paint(ANTI_ALIAS_FLAG)
     private var floatingHintPaint = TextPaint(ANTI_ALIAS_FLAG)
     private var errorPaint = TextPaint(ANTI_ALIAS_FLAG)
-    private var clearIconPaint = Paint(ANTI_ALIAS_FLAG)
+    private var rightIconPaint = Paint(ANTI_ALIAS_FLAG)
 
     private var isFocusPending = false
     private var floatingLabelFraction = 0f
@@ -122,49 +183,26 @@ open class MaterialTextField : EditText {
         )
 
         isLight = styledAttributes.getBoolean(R.styleable.MaterialTextField_isLight, isLight)
-        if (isLight) {
-            defaultUnderlineColor = Color.parseColor("#52FFFFFF")
-            activeUnderlineColor = Color.WHITE
-            defaultHintColor = Color.parseColor("#95C8E4")
-            activeHintColor = Color.parseColor("#95C8E4")
-            cursorDrawableColor = Color.WHITE
-            clearButtonColor = Color.WHITE
-        }
         defaultHintColor = styledAttributes.getColor(R.styleable.MaterialTextField_defaultHintColor, defaultHintColor)
         activeHintColor = styledAttributes.getColor(R.styleable.MaterialTextField_activeHintColor, activeHintColor)
         defaultUnderlineColor = styledAttributes.getColor(R.styleable.MaterialTextField_defaultUnderlineColor, defaultUnderlineColor)
         activeUnderlineColor = styledAttributes.getColor(R.styleable.MaterialTextField_activeUnderlineColor, activeUnderlineColor)
         cursorDrawableColor = styledAttributes.getColor(R.styleable.MaterialTextField_cursorDrawableColor, cursorDrawableColor)
-        clearButtonColor = styledAttributes.getColor(R.styleable.MaterialTextField_clearButtonColor, clearButtonColor)
+        rightButtonColor = styledAttributes.getColor(R.styleable.MaterialTextField_rightButtonColor, rightButtonColor)
         errorColor = styledAttributes.getColor(R.styleable.MaterialTextField_errorColor, errorColor)
         isClearEnabled = styledAttributes.getBoolean(R.styleable.MaterialTextField_isClearEnabled, isClearEnabled)
+        rightIcon = styledAttributes.getDrawable(R.styleable.MaterialTextField_rightIcon)
 
-        context.getDrawable(R.drawable.ic_clear)?.let {
-            clearButton = drawableToBitmap(it)
-            clearButtonSize = clearButton?.height?.toFloat() ?: 0f
-            setPadding(
-                paddingStart,
-                paddingTop,
-                paddingEnd + clearButtonSize.toInt() + (clearButtonSpacing * 1.5f).toInt(),
-                paddingBottom
-            )
-        }
+        originalPaddingBottom = paddingBottom
+
         context.getDrawable(R.drawable.ic_warning)?.let {
             warningIcon = drawableToBitmap(it)
             warningIconSize = warningIcon?.height?.toFloat() ?: 0f
         }
 
-        originalPaddingBottom = paddingBottom
-
         setDefaultSettings()
 
-        clearIconPaint.colorFilter = PorterDuffColorFilter(clearButtonColor, PorterDuff.Mode.SRC_IN)
-
-        errorPaint.color = errorColor
-        errorPaint.colorFilter = PorterDuffColorFilter(errorColor, PorterDuff.Mode.SRC_IN)
         errorPaint.textSize = dp(12)
-        underlineBackgroundPaint.color = defaultUnderlineColor
-        underlineForegroundPaint.color = activeUnderlineColor
         floatingHintPaint.textSize = dp(12)
 
         if (text.isNotEmpty()) {
@@ -203,12 +241,12 @@ open class MaterialTextField : EditText {
             animateUnderline(false)
             isFocusPending = false
         }
-        if (hasFocus() && text.isNotEmpty() && clearButton != null && isClearEnabled) {
+        if (rightIcon != null || (hasFocus() && text.isNotEmpty() && rightButton != null && isClearEnabled)) {
             canvas.drawBitmap(
-                clearButton!!,
-                measuredWidth - clearButtonSize - clearButtonSpacing + scrollX,
-                (originalHeight - clearButtonSize + underlineHeight) / 2,
-                clearIconPaint
+                rightButton!!,
+                measuredWidth - rightButtonSize - rightButtonSpacing + scrollX,
+                (originalHeight - rightButtonSize + underlineHeight) / 2,
+                rightIconPaint
             )
         }
         if (!errorText.isNullOrEmpty()) {
@@ -221,7 +259,7 @@ open class MaterialTextField : EditText {
             )
             canvas.drawBitmap(
                 warningIcon!!,
-                measuredWidth - warningIconSize - clearButtonSpacing + scrollX,
+                measuredWidth - warningIconSize - rightButtonSpacing + scrollX,
                 (measuredHeight.toFloat() - warningIconSize),
                 errorPaint
             )
@@ -256,31 +294,33 @@ open class MaterialTextField : EditText {
         if (hasFocus() && isEnabled && isClearEnabled) {
             when (event?.action) {
                 MotionEvent.ACTION_DOWN -> {
-                    if (isTouchInsideClearButtonArea(event)) {
-                        isClearButtonClickActive = true
-                        isClearButtonTouchActive = true
+                    if (isTouchInsiderightButtonArea(event)) {
+                        isrightButtonClickActive = true
+                        isrightButtonTouchActive = true
                         return true
                     }
                 }
                 MotionEvent.ACTION_MOVE -> {
-                    if (isClearButtonClickActive && !isTouchInsideClearButtonArea(event)) {
-                        isClearButtonClickActive = false
+                    if (isrightButtonClickActive && !isTouchInsiderightButtonArea(event)) {
+                        isrightButtonClickActive = false
                     }
-                    if (isClearButtonTouchActive) return true
+                    if (isrightButtonTouchActive) return true
                 }
                 MotionEvent.ACTION_UP -> {
-                    if (isClearButtonClickActive) {
-                        setText("")
-                        isClearButtonClickActive = false
+                    if (isrightButtonClickActive) {
+                        if (rightIcon == null) {
+                            setText("")
+                        }
+                        isrightButtonClickActive = false
                     }
-                    if (isClearButtonTouchActive) {
-                        isClearButtonTouchActive = false
+                    if (isrightButtonTouchActive) {
+                        isrightButtonTouchActive = false
                         return true
                     }
                 }
                 MotionEvent.ACTION_CANCEL -> {
-                    isClearButtonTouchActive = false
-                    isClearButtonClickActive = false
+                    isrightButtonTouchActive = false
+                    isrightButtonClickActive = false
                 }
             }
         }
@@ -321,11 +361,6 @@ open class MaterialTextField : EditText {
         isSingleLine = true
         textSize = 16f
         height = dp(56).toInt()
-        setCursorColor(cursorDrawableColor)
-        setHintTextColor(defaultHintColor)
-        highlightColor = setColorAlpha(0.2f, cursorDrawableColor)
-        setSelectionHandleColor(cursorDrawableColor)
-
         if (inputType == InputType.TYPE_TEXT_VARIATION_PASSWORD || inputType == 129) {
             transformationMethod = PasswordTransformationMethod.getInstance()
         }
@@ -441,8 +476,8 @@ open class MaterialTextField : EditText {
 
     //
 
-    private fun isTouchInsideClearButtonArea(event: MotionEvent): Boolean {
-        val clearPositionX = measuredWidth - clearButtonSize - clearButtonSpacing * 2 - paddingStart
+    private fun isTouchInsiderightButtonArea(event: MotionEvent): Boolean {
+        val clearPositionX = measuredWidth - rightButtonSize - rightButtonSpacing * 2 - paddingStart
         return event.x >= clearPositionX && event.x < (measuredWidth - paddingStart)
     }
 

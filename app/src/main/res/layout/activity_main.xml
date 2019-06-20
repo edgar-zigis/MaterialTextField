@@ -25,11 +25,11 @@
                 app:defaultUnderlineColor="@android:color/holo_orange_dark"
                 app:activeUnderlineColor="@android:color/holo_red_dark"
                 app:activeHintColor="@android:color/holo_green_dark"
-                app:isClearEnabled="false"
                 app:errorColor="@android:color/holo_green_dark"/>
 
 
         <com.zigis.materialtextfield.MaterialTextField
+                android:id="@+id/password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Password"
