@@ -12,9 +12,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         button.setOnClickListener {
             password.isLight = false
-            mail.error = "Bad myil!"
-            mail.errorColor = ContextCompat.getColor(this, R.color.colorAccent)
-            mail.rightIcon = ContextCompat.getDrawable(this, R.drawable.ic_warning)
+            password.error = "Wrong password!"
+            password.errorColor = ContextCompat.getColor(this, R.color.colorAccent)
         }
     }
 }
