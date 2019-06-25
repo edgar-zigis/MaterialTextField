@@ -193,6 +193,8 @@ open class MaterialTextField : EditText {
         isClearEnabled = styledAttributes.getBoolean(R.styleable.MaterialTextField_isClearEnabled, isClearEnabled)
         rightIcon = styledAttributes.getDrawable(R.styleable.MaterialTextField_rightIcon)
 
+        styledAttributes.recycle()
+
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP) {
             setPadding(paddingStart, paddingTop + dp(6).toInt(), paddingEnd, paddingBottom - dp(2).toInt())
         }
