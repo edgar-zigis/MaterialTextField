@@ -1,14 +1,14 @@
 # MaterialTextField
 
 Custom EditText which follows the latest Material guidelines with animated underline and custom error settings. 
-Minimum SDK: 21
+##### Minimum target SDK: 17. RTL SUPPORTED.
 
 ![alt text](https://github.com/edgar-zigis/MaterialTextField/blob/master/sample.png?raw=true)
 
 ### Gradle
 
 ```
-implementation 'com.github.edgar-zigis:materialtextfield:1.0.5'
+implementation 'com.github.edgar-zigis:materialtextfield:1.1.0'
 ```
 ### Usage
 ```
@@ -29,4 +29,4 @@ implementation 'com.github.edgar-zigis:materialtextfield:1.0.5'
     app:errorColor="@android:color/holo_red_dark" />  //  -> set error icon, text and underline color
 ```
 ### Remarks
-At the moment height is automatically overriden to match original Material guideline height. Also consider using margins instead of paddings. No RTL support.
+At the moment height is automatically overriden to match original Material guideline height. Also consider using margins instead of paddings.
