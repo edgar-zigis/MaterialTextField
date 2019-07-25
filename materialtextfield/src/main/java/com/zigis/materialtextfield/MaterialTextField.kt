@@ -21,10 +21,12 @@ import android.graphics.Bitmap
 import android.graphics.PorterDuff
 import android.text.*
 import android.view.MotionEvent
+import android.view.View
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import com.zigis.materialtextfield.custom.AnimatedRectF
 import com.zigis.materialtextfield.custom.WrapDrawable
+import kotlin.math.roundToInt
 
 open class MaterialTextField : EditText {
 
@@ -88,11 +90,11 @@ open class MaterialTextField : EditText {
     var rightIcon: Drawable? = null
         set(value) {
             field = value
-            val rightButtonIcon = value ?: context.getDrawable(R.drawable.ic_clear)
+            val rightButtonIcon = value ?: ContextCompat.getDrawable(context, R.drawable.ic_clear)
             rightButtonIcon?.let {
                 rightButton = drawableToBitmap(it)
                 rightButtonSize = rightButton?.height?.toFloat() ?: 0f
-                setPadding(
+                setPaddingRelative(
                     paddingStart,
                     paddingTop,
                     paddingEnd + rightButtonSize.toInt() + (rightButtonSpacing * 1.5f).toInt(),
@@ -113,6 +115,8 @@ open class MaterialTextField : EditText {
     private var isrightButtonClickActive = false
     private var isrightButtonTouchActive = false
 
+    private val floatingHintRect = Rect()
+    private val errorTextRect = Rect()
     private var staticUnderline: RectF? = null
     private var errorUnderline: RectF? = null
     private var animatedUnderline: AnimatedRectF? = null
@@ -196,11 +200,11 @@ open class MaterialTextField : EditText {
         styledAttributes.recycle()
 
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP) {
-            setPadding(paddingStart, paddingTop + dp(6).toInt(), paddingEnd, paddingBottom - dp(2).toInt())
+            setPaddingRelative(paddingStart, paddingTop + dp(6).toInt(), paddingEnd, paddingBottom - dp(2).toInt())
         }
         originalPaddingBottom = paddingBottom
 
-        context.getDrawable(R.drawable.ic_warning)?.let {
+        ContextCompat.getDrawable(context, R.drawable.ic_warning)?.let {
             warningIcon = drawableToBitmap(it)
             warningIconSize = warningIcon?.height?.toFloat() ?: 0f
         }
@@ -235,9 +239,10 @@ open class MaterialTextField : EditText {
         hint?.toString()?.let {
             floatingHintPaint.color = if (isFocused) activeHintColor else defaultHintColor
             floatingHintPaint.alpha = (floatingLabelFraction * 255f).toInt()
+            floatingHintPaint.getTextBounds(it, 0, it.length, floatingHintRect)
             canvas.drawText(
                 it,
-                paddingStart.toFloat() + scrollX.toFloat(),
+                if (isRTL()) measuredWidth.toFloat() - floatingHintRect.width() - paddingStart + scrollX.toFloat() else paddingStart + scrollX.toFloat(),
                 max(paddingTop.toFloat(), (measuredHeight / 3 * (1 - floatingLabelFraction))),
                 floatingHintPaint
             )
@@ -247,24 +252,30 @@ open class MaterialTextField : EditText {
             isFocusPending = false
         }
         if (rightIcon != null || (hasFocus() && text.isNotEmpty() && rightButton != null && isClearEnabled)) {
+            val leftOffset = if (isRTL()) {
+                rightButtonSpacing + scrollX
+            } else {
+                measuredWidth - rightButtonSize - rightButtonSpacing + scrollX
+            }
             canvas.drawBitmap(
                 rightButton!!,
-                measuredWidth - rightButtonSize - rightButtonSpacing + scrollX,
+                leftOffset,
                 (originalHeight - rightButtonSize + underlineHeight) / 2,
                 rightIconPaint
             )
         }
         if (!errorText.isNullOrEmpty()) {
             errorPaint.alpha = (errorSpaceFraction * 255f).toInt()
+            errorPaint.getTextBounds(errorText, 0, errorText!!.length, errorTextRect)
             canvas.drawText(
                 errorText!!,
-                paddingStart.toFloat() + scrollX.toFloat(),
+                if (isRTL()) measuredWidth.toFloat() - errorTextRect.width() - paddingStart + scrollX.toFloat() else paddingStart + scrollX.toFloat(),
                 measuredHeight.toFloat() - dp(3),
                 errorPaint
             )
             canvas.drawBitmap(
                 warningIcon!!,
-                measuredWidth - warningIconSize - rightButtonSpacing + scrollX,
+                if (isRTL()) rightButtonSpacing + scrollX else measuredWidth - warningIconSize - rightButtonSpacing + scrollX,
                 (measuredHeight.toFloat() - warningIconSize),
                 errorPaint
             )
@@ -277,7 +288,7 @@ open class MaterialTextField : EditText {
         if (errorSpaceFraction > 0 && errorSpaceFraction < 1) {
             val additionalSpacing = (errorSpacing * errorSpaceFraction).toInt()
             height = originalHeight + additionalSpacing
-            setPadding(paddingStart, paddingTop, paddingEnd, originalPaddingBottom + additionalSpacing)
+            setPaddingRelative(paddingStart, paddingTop, paddingEnd, originalPaddingBottom + additionalSpacing)
         }
     }
 
@@ -299,14 +310,14 @@ open class MaterialTextField : EditText {
         if (hasFocus() && isEnabled && isClearEnabled) {
             when (event?.action) {
                 MotionEvent.ACTION_DOWN -> {
-                    if (isTouchInsiderightButtonArea(event)) {
+                    if (isTouchInsideRightButtonArea(event)) {
                         isrightButtonClickActive = true
                         isrightButtonTouchActive = true
                         return true
                     }
                 }
                 MotionEvent.ACTION_MOVE -> {
-                    if (isrightButtonClickActive && !isTouchInsiderightButtonArea(event)) {
+                    if (isrightButtonClickActive && !isTouchInsideRightButtonArea(event)) {
                         isrightButtonClickActive = false
                     }
                     if (isrightButtonTouchActive) return true
@@ -366,9 +377,11 @@ open class MaterialTextField : EditText {
         isSingleLine = true
         textSize = 16f
         height = dp(56).toInt()
+        textAlignment = View.TEXT_ALIGNMENT_VIEW_START
         if (inputType == InputType.TYPE_TEXT_VARIATION_PASSWORD || inputType == 129) {
             transformationMethod = PasswordTransformationMethod.getInstance()
         }
+        setSelection(text.length)
     }
 
     private fun addTextChangeListener() {
@@ -470,7 +483,7 @@ open class MaterialTextField : EditText {
     //  Focus
 
     private fun initFocusChangeListener() {
-        innerFocusChangeListener = OnFocusChangeListener { v, hasFocus ->
+        innerFocusChangeListener = OnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 isFocusPending = (animatedUnderline == null)
             }
@@ -481,12 +494,19 @@ open class MaterialTextField : EditText {
 
     //
 
-    private fun isTouchInsiderightButtonArea(event: MotionEvent): Boolean {
+    private fun isTouchInsideRightButtonArea(event: MotionEvent): Boolean {
+        if (isRTL()) {
+            return event.x >= 0f && event.x < paddingEnd
+        }
         val clearPositionX = measuredWidth - rightButtonSize - rightButtonSpacing * 2 - paddingStart
         return event.x >= clearPositionX && event.x < (measuredWidth - paddingStart)
     }
 
     //  Helper methods
+
+    private fun isRTL(): Boolean {
+        return resources.configuration.layoutDirection == View.LAYOUT_DIRECTION_RTL
+    }
 
     private fun dp(dp: Int): Float {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp.toFloat(), resources.displayMetrics)
@@ -555,7 +575,7 @@ open class MaterialTextField : EditText {
     }
 
     private fun setColorAlpha(alpha: Float, color: Int): Int {
-        val opacity = Math.round(Color.alpha(color) * alpha)
+        val opacity = (Color.alpha(color) * alpha).roundToInt()
         val red = Color.red(color)
         val green = Color.green(color)
         val blue = Color.blue(color)

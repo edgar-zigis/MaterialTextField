@@ -20,8 +20,8 @@
             android:id="@+id/mail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="E-mail"
-            android:text="admin@bio-matic.com"
+            android:hint="@string/email"
+            android:text="@string/recipient"
             app:cursorDrawableColor="@color/colorAccent"
             app:rightIcon="@drawable/ic_clear"
             app:defaultHintColor="@android:color/darker_gray"
@@ -35,11 +35,11 @@
             android:id="@+id/password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Password"
+            android:hint="@string/password"
+            android:text="@string/recipient"
             android:textSize="16sp"
             android:inputType="textPassword"
             android:layout_marginTop="16dp"/>
-
 
         <Button
             android:id="@+id/button"

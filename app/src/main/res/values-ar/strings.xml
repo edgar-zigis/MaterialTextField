@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">EditText</string>
+    <string name="email">البريد الإلكترونى</string>
+    <string name="password">كلمة المرور</string>
+    <string name="recipient">المستلم</string>
+    <string name="floating_error_incorrect_password">كلمة المرور غير صحيحة</string>
+</resources>
