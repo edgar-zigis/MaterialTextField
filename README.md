@@ -3,7 +3,7 @@
 Custom EditText which follows the latest Material guidelines with animated underline and custom error settings. 
 ##### Minimum target SDK: 17. RTL SUPPORTED.
 
-![alt text](https://github.com/edgar-zigis/MaterialTextField/blob/master/sample.png?raw=true)
+![alt text](https://github.com/edgar-zigis/MaterialTextField/blob/master/sample.gif?raw=true)
 
 ### Gradle
 
