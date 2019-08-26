@@ -6,8 +6,10 @@ Custom EditText which follows the latest Material guidelines with animated under
 ![alt text](https://github.com/edgar-zigis/MaterialTextField/blob/master/sample.gif?raw=true)
 
 ### Gradle
+Make sure you have jitpack.io included in your gradle repositories.
 
 ```
+maven { url "https://jitpack.io" }
 implementation 'com.github.edgar-zigis:materialtextfield:1.1.0'
 ```
 ### Usage
