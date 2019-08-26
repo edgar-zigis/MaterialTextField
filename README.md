@@ -10,7 +10,9 @@ Make sure you have jitpack.io included in your gradle repositories.
 
 ```
 maven { url "https://jitpack.io" }
-implementation 'com.github.edgar-zigis:materialtextfield:1.1.0'
+```
+```
+implementation 'com.github.edgar-zigis:materialtextfield:1.1.1'
 ```
 ### Usage
 ```
