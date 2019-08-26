@@ -125,10 +125,10 @@ open class MaterialTextField : EditText {
     private var warningIcon: Bitmap? = null
     private var warningIconSize = 0f
 
-    private var errorSpacing = dp(15)
-    private var rightButtonSpacing = dp(14)
-    private var underlineHeight = dp(2)
-    private var bottomUnderlineOffset = dp(3)
+    private var errorSpacing = dp(15f)
+    private var rightButtonSpacing = dp(14f)
+    private var underlineHeight = dp(2f)
+    private var bottomUnderlineOffset = dp(3f)
     private var isUnderlineAnimating = false
 
     private var underlineBackgroundPaint = Paint(ANTI_ALIAS_FLAG)
@@ -200,7 +200,7 @@ open class MaterialTextField : EditText {
         styledAttributes.recycle()
 
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP) {
-            setPaddingRelative(paddingStart, paddingTop + dp(6).toInt(), paddingEnd, paddingBottom - dp(2).toInt())
+            setPaddingRelative(paddingStart, paddingTop + dp(6f).toInt(), paddingEnd, paddingBottom - dp(2f).toInt())
         }
         originalPaddingBottom = paddingBottom
 
@@ -211,8 +211,8 @@ open class MaterialTextField : EditText {
 
         setDefaultSettings()
 
-        errorPaint.textSize = dp(12)
-        floatingHintPaint.textSize = dp(12)
+        errorPaint.textSize = dp(12f)
+        floatingHintPaint.textSize = dp(12f)
 
         if (text.isNotEmpty()) {
             floatingLabelFraction = 1f
@@ -270,12 +270,12 @@ open class MaterialTextField : EditText {
             canvas.drawText(
                 errorText!!,
                 if (isRTL()) measuredWidth.toFloat() - errorTextRect.width() - paddingStart + scrollX.toFloat() else paddingStart + scrollX.toFloat(),
-                measuredHeight.toFloat() - dp(3),
+                measuredHeight.toFloat() - dp(3f),
                 errorPaint
             )
             canvas.drawBitmap(
                 warningIcon!!,
-                if (isRTL()) rightButtonSpacing + scrollX else measuredWidth - warningIconSize - rightButtonSpacing + scrollX,
+                if (isRTL()) rightButtonSpacing + scrollX else measuredWidth - warningIconSize - rightButtonSpacing - dp(1.5f) + scrollX,
                 (measuredHeight.toFloat() - warningIconSize),
                 errorPaint
             )
@@ -298,7 +298,7 @@ open class MaterialTextField : EditText {
         initAnimatedUnderline()
         initErrorUnderline()
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
-            cursorDrawable?.setBounds(0, 0, dp(2).toInt(), measuredHeight)
+            cursorDrawable?.setBounds(0, 0, dp(2f).toInt(), measuredHeight)
             textCursorDrawable = cursorDrawable
         }
         if (originalHeight == 0) {
@@ -376,7 +376,7 @@ open class MaterialTextField : EditText {
         background = null
         isSingleLine = true
         textSize = 16f
-        height = dp(56).toInt()
+        height = dp(56f).toInt()
         textAlignment = View.TEXT_ALIGNMENT_VIEW_START
         if (inputType == InputType.TYPE_TEXT_VARIATION_PASSWORD || inputType == 129) {
             transformationMethod = PasswordTransformationMethod.getInstance()
@@ -508,8 +508,8 @@ open class MaterialTextField : EditText {
         return resources.configuration.layoutDirection == View.LAYOUT_DIRECTION_RTL
     }
 
-    private fun dp(dp: Int): Float {
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp.toFloat(), resources.displayMetrics)
+    private fun dp(dp: Float): Float {
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.displayMetrics)
     }
 
     private fun setSelectionHandleColor(color: Int) {

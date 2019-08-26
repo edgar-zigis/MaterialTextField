@@ -23,7 +23,6 @@
             android:hint="@string/email"
             android:text="@string/recipient"
             app:cursorDrawableColor="@color/colorAccent"
-            app:rightIcon="@drawable/ic_clear"
             app:defaultHintColor="@android:color/darker_gray"
             app:defaultUnderlineColor="@android:color/darker_gray"
             app:activeUnderlineColor="@android:color/holo_blue_dark"
