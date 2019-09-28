@@ -94,10 +94,14 @@ open class MaterialTextField : EditText {
             rightButtonIcon?.let {
                 rightButton = drawableToBitmap(it)
                 rightButtonSize = rightButton?.height?.toFloat() ?: 0f
+
+                var endPadding = paddingEnd + rightButtonSize.toInt() + (rightButtonSpacing * 1.5f).toInt()
+                if (!isClearEnabled && rightIcon == null) endPadding = paddingEnd
+
                 setPaddingRelative(
                     paddingStart,
                     paddingTop,
-                    paddingEnd + rightButtonSize.toInt() + (rightButtonSpacing * 1.5f).toInt(),
+                    endPadding,
                     paddingBottom
                 )
             }
