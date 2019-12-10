@@ -15,7 +15,7 @@ maven { url "https://jitpack.io" }
 implementation 'com.github.edgar-zigis:materialtextfield:1.1.2'
 ```
 ### Usage
-```
+``` xml
 <com.zigis.materialtextfield.MaterialTextField
     android:id="@+id/mail"
     android:layout_width="match_parent"
