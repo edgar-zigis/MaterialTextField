@@ -12,7 +12,7 @@ Make sure you have jitpack.io included in your gradle repositories.
 maven { url "https://jitpack.io" }
 ```
 ```
-implementation 'com.github.edgar-zigis:materialtextfield:1.1.3'
+implementation 'com.github.edgar-zigis:materialtextfield:1.2.0'
 ```
 ### Usage
 ``` xml
@@ -22,6 +22,7 @@ implementation 'com.github.edgar-zigis:materialtextfield:1.1.3'
     android:layout_height="wrap_content"  //  -> default 56dp
     android:hint="E-mail"
     android:text="admin@bio-matic.com"
+    app:undelineHeight="1.5dp" //  -> set underline height
     app:isClearEnabled="true" //  -> toggle clear button, default true
     app:rightIcon="@drawable/ic_clear"  //  -> set custom right icon, default null
     app:rightButtonColor="@color/grey"  //  -> set right icon tint, default grey
