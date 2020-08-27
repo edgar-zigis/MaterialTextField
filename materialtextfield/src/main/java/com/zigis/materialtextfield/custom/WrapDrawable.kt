@@ -2,7 +2,9 @@ package com.zigis.materialtextfield.custom
 
 import android.graphics.Canvas
 import android.graphics.ColorFilter
+import android.graphics.PixelFormat
 import android.graphics.drawable.Drawable
+import android.os.Build
 
 class WrapDrawable(private val drawable: Drawable) : Drawable() {
 
@@ -21,7 +23,10 @@ class WrapDrawable(private val drawable: Drawable) : Drawable() {
     }
 
     override fun getOpacity(): Int {
-        return drawable.alpha
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            return drawable.alpha
+        }
+        return PixelFormat.OPAQUE
     }
 
     override fun draw(canvas: Canvas) {

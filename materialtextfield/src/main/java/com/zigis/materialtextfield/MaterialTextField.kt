@@ -16,7 +16,6 @@ import android.view.animation.AccelerateInterpolator
 import androidx.core.content.ContextCompat
 import android.widget.TextView
 import androidx.annotation.ColorInt
-import java.lang.Math.max
 import android.graphics.Bitmap
 import android.graphics.PorterDuff
 import android.text.*
@@ -26,6 +25,7 @@ import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import com.zigis.materialtextfield.custom.AnimatedRectF
 import com.zigis.materialtextfield.custom.WrapDrawable
+import kotlin.math.max
 import kotlin.math.roundToInt
 
 open class MaterialTextField : EditText {
@@ -200,6 +200,7 @@ open class MaterialTextField : EditText {
         errorColor = styledAttributes.getColor(R.styleable.MaterialTextField_errorColor, errorColor)
         isClearEnabled = styledAttributes.getBoolean(R.styleable.MaterialTextField_isClearEnabled, isClearEnabled)
         rightIcon = styledAttributes.getDrawable(R.styleable.MaterialTextField_rightIcon)
+        underlineHeight = styledAttributes.getDimension(R.styleable.MaterialTextField_underlineHeight, dp(2f))
 
         styledAttributes.recycle()
 
@@ -310,9 +311,9 @@ open class MaterialTextField : EditText {
         }
     }
 
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
+    override fun onTouchEvent(event: MotionEvent): Boolean {
         if (hasFocus() && isEnabled && isClearEnabled) {
-            when (event?.action) {
+            when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     if (isTouchInsideRightButtonArea(event)) {
                         isrightButtonClickActive = true

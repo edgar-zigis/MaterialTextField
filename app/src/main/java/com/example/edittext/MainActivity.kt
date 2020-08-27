@@ -20,12 +20,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun attachBaseContext(newBase: Context?) {
-        if (newBase != null) {
-            val context = ContextWrapper.wrap(newBase, Locale("en"))    //  for RTL testing use "ar"
-            super.attachBaseContext(context)
-        } else {
-            super.attachBaseContext(newBase)
-        }
+    override fun attachBaseContext(newBase: Context) {
+        val context = ContextWrapper.wrap(newBase, Locale("en"))    //  for RTL testing use "ar"
+        super.attachBaseContext(context)
     }
 }

@@ -38,7 +38,8 @@
             android:text="@string/recipient"
             android:textSize="16sp"
             android:inputType="textPassword"
-            android:layout_marginTop="16dp"/>
+            android:layout_marginTop="16dp"
+            app:underlineHeight="1.5dp"/>
 
         <Button
             android:id="@+id/button"
