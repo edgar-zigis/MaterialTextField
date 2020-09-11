@@ -14,6 +14,10 @@ class WrapDrawable(private val drawable: Drawable) : Drawable() {
         drawable.setBounds(left, top, right, bottom)
     }
 
+    override fun getConstantState(): ConstantState? {
+        return drawable.constantState
+    }
+
     override fun setAlpha(alpha: Int) {
         drawable.alpha = alpha
     }
