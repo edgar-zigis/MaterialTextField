@@ -1,28 +1,30 @@
 package com.zigis.materialtextfield
 
+import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.content.Context
-import android.util.AttributeSet
-import android.widget.EditText
-import android.graphics.Paint.ANTI_ALIAS_FLAG
-import android.animation.AnimatorSet
 import android.graphics.*
+import android.graphics.Paint.ANTI_ALIAS_FLAG
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
+import android.text.Editable
+import android.text.InputType
+import android.text.TextPaint
+import android.text.TextWatcher
 import android.text.method.PasswordTransformationMethod
+import android.util.AttributeSet
 import android.util.TypedValue
-import android.view.animation.AccelerateInterpolator
-import androidx.core.content.ContextCompat
-import android.widget.TextView
-import androidx.annotation.ColorInt
-import android.graphics.Bitmap
-import android.graphics.PorterDuff
-import android.text.*
 import android.view.MotionEvent
 import android.view.View
+import android.view.View.OnFocusChangeListener
+import android.view.animation.AccelerateInterpolator
+import android.widget.EditText
+import android.widget.TextView
+import androidx.annotation.ColorInt
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
+import androidx.core.content.ContextCompat
 import com.zigis.materialtextfield.custom.AnimatedRectF
 import com.zigis.materialtextfield.custom.WrapDrawable
 import kotlin.math.max
@@ -111,7 +113,6 @@ open class MaterialTextField : EditText {
 
     private var errorText: String? = null
 
-    private var originalHeight = 0
     private var originalPaddingBottom = 0
 
     private var rightButton: Bitmap? = null
@@ -144,6 +145,8 @@ open class MaterialTextField : EditText {
     private var isFocusPending = false
     private var floatingLabelFraction = 0f
     private var errorSpaceFraction = 0f
+
+    private var isMultiline = false
 
     private var innerFocusChangeListener: OnFocusChangeListener? = null
 
@@ -201,6 +204,7 @@ open class MaterialTextField : EditText {
         isClearEnabled = styledAttributes.getBoolean(R.styleable.MaterialTextField_isClearEnabled, isClearEnabled)
         rightIcon = styledAttributes.getDrawable(R.styleable.MaterialTextField_rightIcon)
         underlineHeight = styledAttributes.getDimension(R.styleable.MaterialTextField_underlineHeight, dp(2f))
+        isMultiline = styledAttributes.getBoolean(R.styleable.MaterialTextField_isMultiline, isMultiline)
 
         styledAttributes.recycle()
 
@@ -232,12 +236,16 @@ open class MaterialTextField : EditText {
         staticUnderline?.let {
             it.left = paddingStart.toFloat() + scrollX.toFloat()
             it.right = measuredWidth.toFloat() - paddingStart + scrollX.toFloat()
+            it.top = measuredHeight.toFloat() - underlineHeight / 2 - paddingBottom + bottomUnderlineOffset
+            it.bottom = measuredHeight.toFloat() - paddingBottom + bottomUnderlineOffset
             canvas.drawRect(it, underlineBackgroundPaint)
         }
         animatedUnderline?.let {
             if (!isUnderlineAnimating && hasFocus()) {
                 it.left = paddingStart.toFloat() + scrollX.toFloat()
                 it.right = measuredWidth.toFloat() - paddingStart + scrollX.toFloat()
+                it.top = measuredHeight.toFloat() - underlineHeight - paddingBottom + bottomUnderlineOffset
+                it.bottom = measuredHeight.toFloat() - paddingBottom + bottomUnderlineOffset
             }
             canvas.drawRect(it, underlineForegroundPaint)
         }
@@ -265,7 +273,7 @@ open class MaterialTextField : EditText {
             canvas.drawBitmap(
                 rightButton!!,
                 leftOffset,
-                (originalHeight - rightButtonSize + underlineHeight) / 2,
+                (staticUnderline!!.top - rightButtonSize + underlineHeight) / 2,
                 rightIconPaint
             )
         }
@@ -287,12 +295,13 @@ open class MaterialTextField : EditText {
             errorUnderline?.let {
                 it.left = paddingStart.toFloat() + scrollX.toFloat()
                 it.right = measuredWidth.toFloat() - paddingStart + scrollX.toFloat()
+                it.top = measuredHeight.toFloat() - underlineHeight - paddingBottom + bottomUnderlineOffset
+                it.bottom = measuredHeight.toFloat() - paddingBottom + bottomUnderlineOffset
                 canvas.drawRect(it, errorPaint)
             }
         }
         if (errorSpaceFraction > 0 && errorSpaceFraction < 1) {
             val additionalSpacing = (errorSpacing * errorSpaceFraction).toInt()
-            height = originalHeight + additionalSpacing
             setPaddingRelative(paddingStart, paddingTop, paddingEnd, originalPaddingBottom + additionalSpacing)
         }
     }
@@ -303,11 +312,8 @@ open class MaterialTextField : EditText {
         initAnimatedUnderline()
         initErrorUnderline()
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
-            cursorDrawable?.setBounds(0, 0, dp(2f).toInt(), measuredHeight)
+            cursorDrawable?.setBounds(0, 0, dp(2f).toInt(), lineHeight)
             textCursorDrawable = cursorDrawable
-        }
-        if (originalHeight == 0) {
-            originalHeight = measuredHeight
         }
     }
 
@@ -379,9 +385,18 @@ open class MaterialTextField : EditText {
 
     private fun setDefaultSettings() {
         background = null
-        isSingleLine = true
+        isSingleLine = !isMultiline
         textSize = 16f
-        height = dp(56f).toInt()
+        if (isMultiline) {
+            setCompoundDrawablesWithIntrinsicBounds(
+                null, null, ContextCompat.getDrawable(
+                    context,
+                    R.drawable.spacer
+                ), null
+            )
+        } else {
+            height = dp(56f).toInt()
+        }
         textAlignment = View.TEXT_ALIGNMENT_VIEW_START
         if (inputType == InputType.TYPE_TEXT_VARIATION_PASSWORD || inputType == 129) {
             transformationMethod = PasswordTransformationMethod.getInstance()
@@ -500,11 +515,14 @@ open class MaterialTextField : EditText {
     //
 
     private fun isTouchInsideRightButtonArea(event: MotionEvent): Boolean {
+        val clearPositionY = (staticUnderline!!.top - rightButtonSize + underlineHeight) / 2
         if (isRTL()) {
             return event.x >= 0f && event.x < paddingEnd
+                && event.y >= clearPositionY && event.y < (clearPositionY + rightButtonSize)
         }
         val clearPositionX = measuredWidth - rightButtonSize - rightButtonSpacing * 2 - paddingStart
         return event.x >= clearPositionX && event.x < (measuredWidth - paddingStart)
+            && event.y >= clearPositionY && event.y < (clearPositionY + rightButtonSize)
     }
 
     //  Helper methods
