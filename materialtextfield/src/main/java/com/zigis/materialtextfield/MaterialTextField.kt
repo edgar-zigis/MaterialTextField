@@ -355,7 +355,7 @@ open class MaterialTextField : EditText {
                             setText("")
                         }
                         if (togglePasswordVisibility) {
-                            togglePasswordVisibility()
+                            changePasswordVisibility()
                         }
                         isrightButtonClickActive = false
                     }
@@ -499,7 +499,7 @@ open class MaterialTextField : EditText {
         rectAnimation.setDuration(250).start()
     }
 
-    private fun togglePasswordVisibility() {
+    private fun changePasswordVisibility() {
         val isPasswordVisible = transformationMethod is HideReturnsTransformationMethod
         rightIcon = if (isPasswordVisible) showPasswordIcon else hidePasswordIcon
         transformationMethod = if (isPasswordVisible) {
