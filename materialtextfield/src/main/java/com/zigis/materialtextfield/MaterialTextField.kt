@@ -204,7 +204,7 @@ open class MaterialTextField : EditText {
         isClearEnabled = styledAttributes.getBoolean(R.styleable.MaterialTextField_isClearEnabled, isClearEnabled)
         rightIcon = styledAttributes.getDrawable(R.styleable.MaterialTextField_rightIcon)
         underlineHeight = styledAttributes.getDimension(R.styleable.MaterialTextField_underlineHeight, dp(2f))
-        isMultiline = styledAttributes.getBoolean(R.styleable.MaterialTextField_isMultiline, isMultiline)
+        isMultiline = styledAttributes.getBoolean(R.styleable.MaterialTextField_isMultilineField, isMultiline)
 
         styledAttributes.recycle()
 

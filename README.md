@@ -22,7 +22,7 @@ implementation 'com.github.edgar-zigis:materialtextfield:1.2.0'
     android:layout_height="wrap_content"  //  -> default 56dp
     android:hint="E-mail"
     android:text="admin@bio-matic.com"
-    app:isMultiline="true" //  -> enable multiline support
+    app:isMultilineField="true" //  -> enable multiline support
     app:undelineHeight="1.5dp" //  -> set underline height
     app:isClearEnabled="true" //  -> toggle clear button, default true
     app:rightIcon="@drawable/ic_clear"  //  -> set custom right icon, default null

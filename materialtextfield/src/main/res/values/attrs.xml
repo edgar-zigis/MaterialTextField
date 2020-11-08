@@ -12,6 +12,6 @@
         <attr name="rightIcon" format="reference" />
         <attr name="isLight" format="boolean" />
         <attr name="underlineHeight" format="dimension" />
-        <attr name="isMultiline" format="boolean" />
+        <attr name="isMultilineField" format="boolean" />
     </declare-styleable>
 </resources>
