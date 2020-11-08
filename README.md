@@ -25,7 +25,7 @@ In order to preserve underline animation, please include this into proguard file
 <com.zigis.materialtextfield.MaterialTextField
     android:id="@+id/mail"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"  //  -> default 56dp
+    android:layout_height="wrap_content" <!-- default 56dp -->
     android:hint="E-mail"
     android:text="admin@bio-matic.com"
     app:isMultilineField="true" <!-- enable multiline support -->
