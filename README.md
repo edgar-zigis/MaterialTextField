@@ -28,6 +28,7 @@ In order to preserve underline animation, please include this into proguard file
     android:layout_height="wrap_content" <!-- default 56dp -->
     android:hint="E-mail"
     android:text="admin@bio-matic.com"
+    app:togglePasswordVisibility="true" <!-- enable password toggle support -->
     app:isMultilineField="true" <!-- enable multiline support -->
     app:underlineHeight="1.5dp" <!-- set underline height -->
     app:isClearEnabled="true" <!-- toggle clear button, default true -->
