@@ -93,13 +93,17 @@ open class MaterialTextField : EditText {
     var rightIcon: Drawable? = null
         set(value) {
             field = value
-            val rightButtonIcon = value ?: ContextCompat.getDrawable(context, R.drawable.ic_clear)
+            val rightButtonIcon = when {
+                value != null -> value
+                togglePasswordVisibility && transformationMethod is PasswordTransformationMethod -> showPasswordIcon
+                else -> ContextCompat.getDrawable(context, R.drawable.ic_clear)
+            }
             rightButtonIcon?.let {
                 rightButton = drawableToBitmap(it)
                 rightButtonSize = rightButton?.height?.toFloat() ?: 0f
 
                 var endPadding = defaultPaddingEnd + rightButtonSize.toInt() + (rightButtonSpacing * 1.5f).toInt()
-                if (!isClearEnabled && rightIcon == null) endPadding = defaultPaddingEnd
+                if (!(isClearEnabled || togglePasswordVisibility) && rightIcon == null) endPadding = defaultPaddingEnd
 
                 setPaddingRelative(
                     paddingStart,
@@ -112,8 +116,8 @@ open class MaterialTextField : EditText {
     var togglePasswordVisibility: Boolean = false
         set(value) {
             field = value
-            if (value && transformationMethod is PasswordTransformationMethod) {
-                rightIcon = showPasswordIcon
+            if (value) {
+                isClearEnabled = false
             }
         }
 
@@ -217,10 +221,10 @@ open class MaterialTextField : EditText {
         rightButtonColor = styledAttributes.getColor(R.styleable.MaterialTextField_rightButtonColor, rightButtonColor)
         errorColor = styledAttributes.getColor(R.styleable.MaterialTextField_errorColor, errorColor)
         isClearEnabled = styledAttributes.getBoolean(R.styleable.MaterialTextField_isClearEnabled, isClearEnabled)
+        togglePasswordVisibility = styledAttributes.getBoolean(R.styleable.MaterialTextField_togglePasswordVisibility, togglePasswordVisibility)
         rightIcon = styledAttributes.getDrawable(R.styleable.MaterialTextField_rightIcon)
         underlineHeight = styledAttributes.getDimension(R.styleable.MaterialTextField_underlineHeight, dp(2f))
         isMultiline = styledAttributes.getBoolean(R.styleable.MaterialTextField_isMultiline, isMultiline)
-        togglePasswordVisibility = styledAttributes.getBoolean(R.styleable.MaterialTextField_togglePasswordVisibility, togglePasswordVisibility)
 
         styledAttributes.recycle()
 
@@ -280,7 +284,7 @@ open class MaterialTextField : EditText {
             animateUnderline(false)
             isFocusPending = false
         }
-        if (rightIcon != null || (hasFocus() && text.isNotEmpty() && rightButton != null && isClearEnabled)) {
+        if (rightIcon != null || (hasFocus() && text.isNotEmpty() && rightButton != null && (isClearEnabled || togglePasswordVisibility))) {
             val leftOffset = if (isRTL()) {
                 rightButtonSpacing + scrollX
             } else {
@@ -334,7 +338,7 @@ open class MaterialTextField : EditText {
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        if (hasFocus() && isEnabled && isClearEnabled) {
+        if (hasFocus() && isEnabled && (isClearEnabled || togglePasswordVisibility)) {
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     if (isTouchInsideRightButtonArea(event)) {
@@ -351,10 +355,9 @@ open class MaterialTextField : EditText {
                 }
                 MotionEvent.ACTION_UP -> {
                     if (isrightButtonClickActive) {
-                        if (rightIcon == null) {
+                        if (isClearEnabled) {
                             setText("")
-                        }
-                        if (togglePasswordVisibility) {
+                        } else if (togglePasswordVisibility) {
                             changePasswordVisibility()
                         }
                         isrightButtonClickActive = false
@@ -501,12 +504,14 @@ open class MaterialTextField : EditText {
 
     private fun changePasswordVisibility() {
         val isPasswordVisible = transformationMethod is HideReturnsTransformationMethod
-        rightIcon = if (isPasswordVisible) showPasswordIcon else hidePasswordIcon
+        val toggleDrawable = if (isPasswordVisible) showPasswordIcon else hidePasswordIcon
+        rightButton = drawableToBitmap(toggleDrawable!!)
         transformationMethod = if (isPasswordVisible) {
             PasswordTransformationMethod.getInstance()
         } else {
             HideReturnsTransformationMethod.getInstance()
         }
+        setSelection(text.length)
     }
 
     //  Floating label
