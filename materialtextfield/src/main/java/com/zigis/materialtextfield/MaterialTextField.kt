@@ -338,7 +338,7 @@ open class MaterialTextField : EditText {
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        if (hasFocus() && isEnabled && (isClearEnabled || togglePasswordVisibility)) {
+        if (hasFocus() && isEnabled && (isClearEnabled || togglePasswordVisibility) && text.isNotEmpty()) {
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     if (isTouchInsideRightButtonArea(event)) {
