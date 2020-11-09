@@ -13,5 +13,6 @@
         <attr name="isLight" format="boolean" />
         <attr name="underlineHeight" format="dimension" />
         <attr name="isMultilineField" format="boolean" />
+        <attr name="togglePasswordVisibility" format="boolean"/>
     </declare-styleable>
 </resources>
