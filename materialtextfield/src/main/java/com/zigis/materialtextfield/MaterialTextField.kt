@@ -409,16 +409,12 @@ open class MaterialTextField : EditText {
         background = null
         isSingleLine = !isMultiline
         textSize = 16f
-        if (isMultiline) {
-            setCompoundDrawablesWithIntrinsicBounds(
-                null, null, ContextCompat.getDrawable(
-                    context,
-                    R.drawable.spacer
-                ), null
-            )
-        } else {
-            height = dp(56f).toInt()
-        }
+        setCompoundDrawablesWithIntrinsicBounds(
+            null, null, ContextCompat.getDrawable(
+                context,
+                R.drawable.spacer
+            ), null
+        )
         textAlignment = View.TEXT_ALIGNMENT_VIEW_START
         if (inputType == InputType.TYPE_TEXT_VARIATION_PASSWORD || inputType == 129) {
             transformationMethod = PasswordTransformationMethod.getInstance()
