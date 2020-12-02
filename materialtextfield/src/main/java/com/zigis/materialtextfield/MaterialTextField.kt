@@ -598,9 +598,7 @@ open class MaterialTextField : EditText {
                     handleField.set(editor, drawable)
                 }
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        } catch (ignored: Exception) {}
     }
 
     private fun setCursorColor(@ColorInt color: Int) {
