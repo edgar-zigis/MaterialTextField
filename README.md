@@ -12,7 +12,7 @@ Make sure you have jitpack.io included in your gradle repositories.
 maven { url "https://jitpack.io" }
 ```
 ```
-implementation 'com.github.edgar-zigis:materialtextfield:1.4.2'
+implementation 'com.github.edgar-zigis:materialtextfield:1.4.3'
 ```
 ### Proguard
 In order to preserve underline animation, please include this into proguard file.
