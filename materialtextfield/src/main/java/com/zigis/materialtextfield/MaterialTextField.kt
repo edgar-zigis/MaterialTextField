@@ -331,10 +331,6 @@ open class MaterialTextField : EditText {
         initStaticUnderline()
         initAnimatedUnderline()
         initErrorUnderline()
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
-            cursorDrawable?.setBounds(0, 0, dp(2f).toInt(), lineHeight)
-            textCursorDrawable = cursorDrawable
-        }
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -418,6 +414,10 @@ open class MaterialTextField : EditText {
         textAlignment = View.TEXT_ALIGNMENT_VIEW_START
         if (inputType == InputType.TYPE_TEXT_VARIATION_PASSWORD || inputType == 129) {
             transformationMethod = PasswordTransformationMethod.getInstance()
+        }
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
+            cursorDrawable?.setBounds(0, 0, dp(2f).toInt(), lineHeight)
+            textCursorDrawable = cursorDrawable
         }
         setSelection(text.length)
     }
