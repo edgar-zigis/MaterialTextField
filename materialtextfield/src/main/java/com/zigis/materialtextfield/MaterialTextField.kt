@@ -163,6 +163,7 @@ open class MaterialTextField : EditText {
     private var defaultPaddingEnd = 0
 
     private var innerFocusChangeListener: OnFocusChangeListener? = null
+    private var focusChangeListener: OnFocusChangeListener? = null
 
     private val showPasswordIcon = ContextCompat.getDrawable(context, R.drawable.ic_eye_on)
     private val hidePasswordIcon = ContextCompat.getDrawable(context, R.drawable.ic_eye_off)
@@ -375,6 +376,8 @@ open class MaterialTextField : EditText {
     override fun setOnFocusChangeListener(l: OnFocusChangeListener?) {
         if (innerFocusChangeListener == null) {
             super.setOnFocusChangeListener(l)
+        } else {
+            focusChangeListener = l
         }
     }
 
@@ -533,11 +536,12 @@ open class MaterialTextField : EditText {
     //  Focus
 
     private fun initFocusChangeListener() {
-        innerFocusChangeListener = OnFocusChangeListener { _, hasFocus ->
+        innerFocusChangeListener = OnFocusChangeListener { view, hasFocus ->
             if (hasFocus) {
                 isFocusPending = (animatedUnderline == null)
             }
             animateUnderline(!hasFocus)
+            focusChangeListener?.onFocusChange(view, hasFocus)
         }
         super.setOnFocusChangeListener(innerFocusChangeListener)
     }
