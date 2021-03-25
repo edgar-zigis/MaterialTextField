@@ -163,6 +163,7 @@ open class MaterialTextField : EditText {
     private var defaultPaddingEnd = 0
 
     private var innerFocusChangeListener: OnFocusChangeListener? = null
+    private var focusChangeListener: OnFocusChangeListener? = null
 
     private val showPasswordIcon = ContextCompat.getDrawable(context, R.drawable.ic_eye_on)
     private val hidePasswordIcon = ContextCompat.getDrawable(context, R.drawable.ic_eye_off)
@@ -331,10 +332,6 @@ open class MaterialTextField : EditText {
         initStaticUnderline()
         initAnimatedUnderline()
         initErrorUnderline()
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
-            cursorDrawable?.setBounds(0, 0, dp(2f).toInt(), lineHeight)
-            textCursorDrawable = cursorDrawable
-        }
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -379,6 +376,8 @@ open class MaterialTextField : EditText {
     override fun setOnFocusChangeListener(l: OnFocusChangeListener?) {
         if (innerFocusChangeListener == null) {
             super.setOnFocusChangeListener(l)
+        } else {
+            focusChangeListener = l
         }
     }
 
@@ -418,6 +417,10 @@ open class MaterialTextField : EditText {
         textAlignment = View.TEXT_ALIGNMENT_VIEW_START
         if (inputType == InputType.TYPE_TEXT_VARIATION_PASSWORD || inputType == 129) {
             transformationMethod = PasswordTransformationMethod.getInstance()
+        }
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
+            cursorDrawable?.setBounds(0, 0, dp(2f).toInt(), lineHeight)
+            textCursorDrawable = cursorDrawable
         }
         setSelection(text.length)
     }
@@ -533,11 +536,12 @@ open class MaterialTextField : EditText {
     //  Focus
 
     private fun initFocusChangeListener() {
-        innerFocusChangeListener = OnFocusChangeListener { _, hasFocus ->
+        innerFocusChangeListener = OnFocusChangeListener { view, hasFocus ->
             if (hasFocus) {
                 isFocusPending = (animatedUnderline == null)
             }
             animateUnderline(!hasFocus)
+            focusChangeListener?.onFocusChange(view, hasFocus)
         }
         super.setOnFocusChangeListener(innerFocusChangeListener)
     }
