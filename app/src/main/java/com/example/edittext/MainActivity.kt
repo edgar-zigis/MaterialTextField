@@ -13,14 +13,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val binding = ActivityMainBinding.inflate(LayoutInflater.from(this))
-        setContentView(binding.root)
-
-        binding.button.setOnClickListener {
-            binding.password.isLight = false
-            binding.password.error = resources.getString(R.string.floating_error_incorrect_password)
-            binding.password.errorColor = ContextCompat.getColor(this, R.color.colorAccent)
+        ActivityMainBinding.inflate(LayoutInflater.from(this)).apply {
+            setContentView(root)
+            button.setOnClickListener {
+                password.isLight = false
+                password.error = resources.getString(R.string.floating_error_incorrect_password)
+                password.errorColor = ContextCompat.getColor(this@MainActivity, R.color.colorAccent)
+            }
         }
     }
 
