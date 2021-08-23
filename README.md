@@ -8,16 +8,16 @@ Custom EditText which follows the latest Material guidelines with animated under
 ### Gradle
 Make sure you have jitpack.io included in your gradle repositories.
 
-```
+```gradle
 maven { url "https://jitpack.io" }
 ```
-```
+```gradle
 implementation 'com.github.edgar-zigis:materialtextfield:1.4.5'
 ```
 ### Proguard
 In order to preserve underline animation, please include this into proguard file.
 
-```
+```proguard
 -keep class com.zigis.materialtextfield.** { *; }
 ```
 ### Usage
