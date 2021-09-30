@@ -6,13 +6,17 @@ Custom EditText which follows the latest Material guidelines with animated under
 ![alt text](https://github.com/edgar-zigis/MaterialTextField/blob/master/sample.gif?raw=true)
 
 ### Gradle
-Make sure you have jitpack.io included in your gradle repositories.
+Make sure you have **Maven Central** included in your gradle repositories.
 
 ```gradle
-maven { url "https://jitpack.io" }
+allprojects {
+    repositories {
+        mavenCentral()
+    }
+}
 ```
 ```gradle
-implementation 'com.github.edgar-zigis:materialtextfield:1.4.5'
+implementation 'com.bio-matic:materialtextfield:1.4.6'
 ```
 ### Proguard
 In order to preserve underline animation, please include this into proguard file.
