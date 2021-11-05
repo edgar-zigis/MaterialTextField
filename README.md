@@ -1,4 +1,4 @@
-# MaterialTextField
+# MaterialTextField [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.bio-matic/materialtextfield/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.bio-matic/materialtextfield)
 
 Custom EditText which follows the latest Material guidelines with animated underline and custom error settings. 
 ##### Minimum target SDK: 17. RTL SUPPORTED.
