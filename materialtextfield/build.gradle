@@ -1,5 +1,7 @@
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
+plugins {
+    id "com.android.library"
+    id 'org.jetbrains.kotlin.android'
+}
 
 ext {
     PUBLISH_ARTIFACT_ID = "materialtextfield"
@@ -8,11 +10,14 @@ ext {
 apply from: "${rootProject.projectDir}/maven/publish-module.gradle"
 
 android {
-    compileSdkVersion 33
+
+    namespace 'com.zigis.materialtextfield'
+    compileSdk 34
 
     defaultConfig {
         minSdkVersion 17
-        targetSdkVersion 33
+        targetSdkVersion 34
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -22,7 +27,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    namespace 'com.zigis.materialtextfield'
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = '17'
+    }
 
     publishing {
         singleVariant("release") {
@@ -32,5 +45,5 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.10.1'
+    implementation 'androidx.core:core-ktx:1.12.0'
 }

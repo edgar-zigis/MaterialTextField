@@ -1,1 +1,3 @@
-include ':app', ':materialtextfield'
+rootProject.name = "MaterialTextField"
+include ':materialtextfield'
+include ':app'
