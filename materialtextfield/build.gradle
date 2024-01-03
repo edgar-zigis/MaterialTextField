@@ -23,6 +23,12 @@ android {
         }
     }
     namespace 'com.zigis.materialtextfield'
+
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+        }
+    }
 }
 
 dependencies {
