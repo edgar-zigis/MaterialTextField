@@ -16,7 +16,7 @@ allprojects {
 }
 ```
 ```gradle
-implementation 'com.bio-matic:materialtextfield:1.4.6'
+implementation 'com.bio-matic:materialtextfield:1.4.7'
 ```
 ### Proguard
 In order to preserve underline animation, please include this into proguard file.
